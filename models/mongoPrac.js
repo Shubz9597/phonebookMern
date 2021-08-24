@@ -4,8 +4,7 @@ if(process.argv.length < 3){
     console.log('Please provide the password as an argument: node mongo.js <password>')
     process.exit(1)
 }
-const password = process.argv[2]
-const url = `mongodb+srv://phoneBookman:${password}@cluster0.7usrw.mongodb.net/myFirstDatabase?retryWrites=true&w=majority`
+const url = `mongodb+srv://phoneBookman:loseroftheyear@cluster0.7usrw.mongodb.net/Phonebook?retryWrites=true&w=majority`
 
 mongoose.connect(url, {useNewUrlParser: true, useUnifiedTopology: true, useFindAndModify: false, useCreateIndex: true })
 
