@@ -3,7 +3,6 @@ const express = require('express')
 const morgan = require('morgan')
 const cors = require('cors')
 const Person = require('./models/person')
-const { response } = require('express')
 
 const app = express()
 app.use(express.json())
@@ -45,20 +44,9 @@ app.get('/api/persons/:id' , (req, res, next) => {
     }).catch(error => next(error))
 })
 
-app.post('/api/persons', (req, res) => {
+app.post('/api/persons', (req, res, next) => {
     const body = req.body
-    if(!body.name) {
-        return res.status(400).json({
-            error: 'Name Missing'
-        })
-    }
-
-    else if(!body.number) {
-        return res.status(400).json({
-            error : 'Number missing'
-        })
-    }
-
+    
     const person = new Person({
         name: body.name,
         number: body.number
@@ -67,10 +55,11 @@ app.post('/api/persons', (req, res) => {
     person.save().then(savedPerson => {
         res.json(savedPerson)
     })
+    .catch(error => next(error))
 })
 
 
-app.delete('/api/persons/:id', (req, res) => {
+app.delete('/api/persons/:id', (req, res, next) => {
     Person.findByIdAndRemove(req.params.id)
     .then(result => {
         res.status(204).end()
@@ -105,6 +94,8 @@ const errorHandler = (error, request , response, next) => {
 
     if(error.name === 'CastError'){
         return response.status(400).send({error : 'malformatted id'})
+    } else if(error.name === 'ValidationError'){
+        return response.status(400).json({error: error.message})
     }
     next(error)
 }
